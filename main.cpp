@@ -70,21 +70,11 @@ void Draw(GLContext& context) {
     
 }
 
-void Input(GLContext& context, int key) {
-
-}
-
-void initialize(GLContext& context) {
-
-}
-
 int main() {
 	GLContext context;
 	context.window_name = "test";
 	context.background = vec4(0, 0, 0, 0);
 	context.onDraw = Draw;
-	context.onInput = Input;
-    context.initialize = initialize;
     context.alpha = true;
 	context.init(1000, 1000);
 }

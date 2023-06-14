@@ -11,6 +11,6 @@ file(GLOB SOURCE_FILES *.cpp)
 # Add an executable target
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
-add_subdirectory(barebone-graphic-engine)
+add_subdirectory(barebone-graphics-engine)
 
 target_link_libraries(${PROJECT_NAME} barebone-engine)

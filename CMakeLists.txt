@@ -4,13 +4,16 @@ project(snowflake_gen)
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 11)
 
+include_directories(./)
 
-# Add all source files in the src folder
-file(GLOB SOURCE_FILES *.cpp)
+file(GLOB SOURCE_FILES "*.cpp" "*.h")
 
 # Add an executable target
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
-add_subdirectory(barebone-graphics-engine)
+add_subdirectory(imgui)
 
-target_link_libraries(${PROJECT_NAME} barebone-engine)
+target_link_libraries(${PROJECT_NAME} imgui)
+
+
+

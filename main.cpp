@@ -73,9 +73,6 @@ void Draw() {
 }
 
 void ui() {
-
-    ImGui::ShowDemoWindow();
-
     ImGui::Begin("Parameters");
 
     ImGui::Text("This is some useful text.");
@@ -83,17 +80,25 @@ void ui() {
     ImGui::End();
 }
 
-int main() {
-	window_name = "test";
-	background = vec4(0, 0, 0, 0);
-	onDraw = Draw;
-    alpha = true;
-    UI = ui;
-	init(1000, 1000);
+void Input(int key) {
+    if (key == 32) {
+        TakeScreenshot("C:/Users/eliot/Desktop/test/yeah.png");
+    }
 }
 
-//TODO : remove demo window imgui
-//TODO : make fullscreen windowed
-//TODO : test other function (alpha, fullscreen, backgroud,..etc)
+int WinMain() {
+	window_name = "snowflake generator";
+	background = vec4(0, 0, 0, 0);
+	onDraw = Draw;
+    onDrawUI = ui;
+    onInput = Input;
+    alpha = true;
+    fullscreen = false;
+	init(1500, 1000);
+}
+
+//TODO : add paramteters
+
 //TODO : creat independant module for renderer/gui
+//TODO : overwritting function
 

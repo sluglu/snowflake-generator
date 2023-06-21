@@ -11,9 +11,9 @@ file(GLOB SOURCE_FILES "*.cpp" "*.h")
 # Add an executable target
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
-add_subdirectory(imgui)
+add_subdirectory(barebone-engine)
 
-target_link_libraries(${PROJECT_NAME} imgui)
+target_link_libraries(${PROJECT_NAME} barebone-engine)
 
 
 

@@ -6,16 +6,22 @@ int armsN = 5;
 int gen = 10;
 float radius = 0.7f;
 float pointSize = 1.0f;
+bool randomColor = false;
+vec4 pointColor = vec4(1, 1, 1, 1);
+string message = " ";
+char* filepath = "C:/Users/eliot/Desktop/test/yeah";
+int counter = 0;
+bool showInit = true;
 
 using namespace GLContext;
 
-int getRandomInt(int maxValue, int exclud) {
+int getRandomInt(int maxValue, int exclud = -1) {
     int result = exclud;
     while (result == exclud) {
         std::random_device rd;
-        std::mt19937 gen(rd());
+        std::mt19937 gene(rd());
         std::uniform_int_distribution<> dist(0, maxValue - 1);
-        result = dist(gen);
+        result = dist(gene);
     }
     return result;
 }
@@ -52,9 +58,18 @@ vec2 getMidpoint(const vec2& p1, const vec2& p2) {
 }
 
 void Draw() {
+    vec4 color;
+    if (!randomColor) { color = pointColor; }
+    else { color.x = getRandomInt(255);
+           color.y = getRandomInt(255);
+           color.z = getRandomInt(255);
+           color.w = 255;
+    }
     std::vector<vec2> points = distributePointsInCircle(armsN, radius);
-    for (vec2 p : points) {
-        drawPoint(p);
+    if (showInit) {
+        for (vec2 p : points) {
+            drawPoint(p);
+        }
     }
 
     int startIndex = getRandomInt(armsN, -1);
@@ -64,7 +79,7 @@ void Draw() {
     
     for (int i = 0; i < gen; i++) {
         vec2 newPoint = getMidpoint(inPoint, sidePoint);
-        drawPoint(newPoint, pointSize);
+        drawPoint(newPoint, pointSize, color);
         inPoint = newPoint;
         index = getRandomInt(armsN, index);
         sidePoint = points[index];
@@ -72,10 +87,56 @@ void Draw() {
     
 }
 
+
+
 void Ui() {
     ImGui::Begin("Parameters");
 
-    ImGui::Text("This is some useful text.");
+    //PI
+    //ImGui::Text("value of PI");
+    ImGui::SliderFloat("value of PI", &PI, -10.0f, 10.0f);
+    if (ImGui::Button("Reset")) { PI = 3.14159265359f; }
+
+    //ArmsN
+    //ImGui::Text("arms number");
+    ImGui::InputInt("arms number", &armsN);
+
+    //gen
+    //ImGui::Text("generation between frame");
+    ImGui::InputInt("generation/frame", &gen);
+
+    //radius
+    //ImGui::Text("radius");
+    ImGui::SliderFloat("radius", &radius, 0.0f, 1.0f);
+
+    //pointSize
+    //ImGui::Text("point size");
+    ImGui::SliderFloat("point size", &pointSize, 0.001f, 30.0f);
+
+    //background
+    ImGui::ColorEdit4("background", &background.x);
+
+    //point color
+    ImGui::ColorEdit4("point color", &pointColor.x);
+
+    //alpha
+    ImGui::Checkbox("alpha blending", &alpha);
+
+    //showInit
+    ImGui::Checkbox("show inits points", &showInit);
+
+    //take screenshot
+    if (ImGui::Button("take a screenshot")) {
+        TakeScreenshot(filepath + to_string(counter) + ".png");
+        message = "saved to : ";
+        message.append(filepath + to_string(counter) + ".png");
+        counter++;
+    }
+
+    ImGui::Text(message.c_str());
+
+
+    
 
     ImGui::End();
 }
@@ -88,11 +149,9 @@ void Input(int key) {
 
 int WinMain() {
 	window_name = "snowflake generator";
-	background = vec4(0, 0, 0, 0);
 	onDraw = Draw;
     onDrawUI = Ui;
     onInput = Input;
-    alpha = true;
 	init(1500, 1000);
 }
 

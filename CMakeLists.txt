@@ -4,12 +4,14 @@ project(snowflake_gen)
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 11)
 
+set(GUI_TYPE WIN32)
+
 include_directories(./)
 
 file(GLOB SOURCE_FILES "*.cpp" "*.h")
 
 # Add an executable target
-add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+add_executable(${PROJECT_NAME} ${GUI_TYPE} ${SOURCE_FILES})
 
 add_subdirectory(barebone-engine)
 

@@ -96,7 +96,5 @@ int WinMain() {
 	init(1500, 1000);
 }
 
-//TODO : add paramteters
-
-//TODO : creat independant module for renderer/gui
+//TODO : add paramteters GUI
 

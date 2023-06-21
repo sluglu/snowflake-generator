@@ -72,7 +72,7 @@ void Draw() {
     
 }
 
-void ui() {
+void Ui() {
     ImGui::Begin("Parameters");
 
     ImGui::Text("This is some useful text.");
@@ -90,15 +90,13 @@ int WinMain() {
 	window_name = "snowflake generator";
 	background = vec4(0, 0, 0, 0);
 	onDraw = Draw;
-    onDrawUI = ui;
+    onDrawUI = Ui;
     onInput = Input;
     alpha = true;
-    fullscreen = false;
 	init(1500, 1000);
 }
 
 //TODO : add paramteters
 
 //TODO : creat independant module for renderer/gui
-//TODO : overwritting function
 

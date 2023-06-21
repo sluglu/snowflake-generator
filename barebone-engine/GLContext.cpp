@@ -8,22 +8,24 @@ namespace GLContext {
     int oldY = 500;
     bool fullScreenUpdate = false;
     GLFWwindow* window;
+    GLuint fbo = 0;
+    GLuint texture = 0;
 
 
     const char* window_name = "  ";
     bool alpha = false;
+    bool GUI = true;
     bool fullscreen = false;
     int SCR_WIDTH = 1920;
     int SCR_HEIGHT = 1080;
     int viewportResW = 1000;
     int viewportResH = 1000;
     vec4 background = vec4(0, 0, 0, 0);
-    void(*onInput)(int key) {};
-    void(*onDraw)() {};
-    void(*initialize)() {};
-    void(*onDrawUI)();
-    GLuint fbo = 0;
-    GLuint texture = 0;
+    void (*onInput)(int key) {};
+    void (*onDraw)() {};
+    void (*initialize)() {};
+    void (*onDrawUI)() {};
+    
 
     void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     {

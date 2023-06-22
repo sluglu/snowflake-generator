@@ -6,21 +6,43 @@ int armsN = 5;
 int gen = 10;
 float radius = 0.7f;
 float pointSize = 1.0f;
-bool randomColor = false;
 vec4 pointColor = vec4(1, 1, 1, 1);
-string message;
-int counter = 0;
+string message = " ";
 bool showInit = true;
 
-int getRandomInt(int maxValue, int exclud = -1) {
-    int result = exclud;
-    while (result == exclud) {
-        std::random_device rd;
-        std::mt19937 gene(rd());
-        std::uniform_int_distribution<> dist(0, maxValue - 1);
-        result = dist(gene);
-    }
-    return result;
+bool RPI = true;
+bool RarmsN = true;
+bool Rgen = false;
+bool Rradius = true;
+bool RpointSize = false;
+bool RpointColor = true;
+bool Rbackground = true;
+
+
+
+float getRandomFloat(float min, float max) {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<float> dis(min, max);
+
+    return dis(gen);
+}
+
+int getRandomInt(int min, int max) {
+    std::random_device rd;
+    std::mt19937 gene(rd());
+    std::uniform_int_distribution<> dist(min, max);
+    return dist(gene);
+}
+
+void randomize() {
+    if (RPI) PI = getRandomFloat(-10.0f, 10.0f);
+    if (RarmsN) armsN = getRandomInt(1, 50);
+    if (Rradius) gen = getRandomInt(1, 100);
+    if (Rradius) radius = getRandomFloat(0.0f, 1.0f);
+    if (RpointSize) pointSize = getRandomFloat(0.001f, 10.0f);
+    if (RpointColor) pointColor = vec4(getRandomFloat(0.0f, 1.0f) , getRandomFloat(0.0f, 1.0f), getRandomFloat(0.0f, 1.0f), getRandomFloat(0.0f, 1.0f));
+    if (Rbackground) GLContext::background = vec4(getRandomFloat(0.0f, 1.0f), getRandomFloat(0.0f, 1.0f), getRandomFloat(0.0f, 1.0f), getRandomFloat(0.0f, 1.0f));
 }
 
 std::vector<vec2> distributePointsInCircle(int numPoints, double radius) {
@@ -54,14 +76,18 @@ vec2 getMidpoint(const vec2& p1, const vec2& p2) {
     return midpoint;
 }
 
-void Draw() {
-    vec4 color;
-    if (!randomColor) { color = pointColor; }
-    else { color.x = getRandomInt(255);
-           color.y = getRandomInt(255);
-           color.z = getRandomInt(255);
-           color.w = 255;
+int getRandomIntExclud(int maxValue, int exclud = -1) {
+    int result = exclud;
+    while (result == exclud) {
+        std::random_device rd;
+        std::mt19937 gene(rd());
+        std::uniform_int_distribution<> dist(0, maxValue - 1);
+        result = dist(gene);
     }
+    return result;
+}
+
+void Draw() {
     std::vector<vec2> points = distributePointsInCircle(armsN, radius);
     if (showInit) {
         for (vec2 p : points) {
@@ -69,16 +95,16 @@ void Draw() {
         }
     }
 
-    int startIndex = getRandomInt(armsN, -1);
+    int startIndex = getRandomIntExclud(armsN, -1);
     vec2 inPoint = points[startIndex];
-    int index = getRandomInt(armsN, startIndex);
+    int index = getRandomIntExclud(armsN, startIndex);
     vec2 sidePoint = points[index];
     
     for (int i = 0; i < gen; i++) {
         vec2 newPoint = getMidpoint(inPoint, sidePoint);
-        GLContext::drawPoint(newPoint, pointSize, color);
+        GLContext::drawPoint(newPoint, pointSize, pointColor);
         inPoint = newPoint;
-        index = getRandomInt(armsN, index);
+        index = getRandomIntExclud(armsN, index);
         sidePoint = points[index];
     }
     
@@ -108,7 +134,7 @@ void Ui() {
 
     //pointSize
     //ImGui::Text("point size");
-    ImGui::SliderFloat("point size", &pointSize, 0.001f, 30.0f);
+    ImGui::SliderFloat("point size", &pointSize, 0.001f, 10.0f);
 
     //background
     ImGui::ColorEdit4("background", &GLContext::background.x);
@@ -122,14 +148,28 @@ void Ui() {
     //showInit
     ImGui::Checkbox("show inits points", &showInit);
 
+    //randomize
+    if (ImGui::Button("randomize")) {
+        randomize();
+    }
+    if (ImGui::BeginMenu("randomize parameters")) {
+        ImGui::Checkbox("randomize PI", &RPI);
+        ImGui::Checkbox("randomize arms number", &RarmsN);
+        ImGui::Checkbox("randomize generation/frame", &Rgen);
+        ImGui::Checkbox("randomize radius", &Rradius);
+        ImGui::Checkbox("randomize point size", &RpointSize);
+        ImGui::Checkbox("randomize point color", &RpointColor);
+        ImGui::Checkbox("randomize background", &Rbackground);
+        ImGui::EndMenu();
+    }
     //take screenshot
-
     if (ImGui::Button("take a screenshot")) {
         
         message = GLContext::TakeScreenshot();
+        
     }
-
     ImGui::Text(message.c_str());
+
 
     ImGui::End();
 }
@@ -142,6 +182,5 @@ int __stdcall WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char* szCmdLine, int
     return 0;
 }
 
-//TODO : add randomize button
-//TODO : bug filepath message 
+//TODO : bug crash randomize
 

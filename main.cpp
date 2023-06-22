@@ -143,4 +143,5 @@ int __stdcall WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char* szCmdLine, int
 }
 
 //TODO : add randomize button
+//TODO : bug filepath message 
 

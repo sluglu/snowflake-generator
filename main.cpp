@@ -8,12 +8,9 @@ float radius = 0.7f;
 float pointSize = 1.0f;
 bool randomColor = false;
 vec4 pointColor = vec4(1, 1, 1, 1);
-string message = " ";
-char* filepath = "C:/Users/eliot/Desktop/test/yeah";
+string message;
 int counter = 0;
 bool showInit = true;
-
-using namespace GLContext;
 
 int getRandomInt(int maxValue, int exclud = -1) {
     int result = exclud;
@@ -68,7 +65,7 @@ void Draw() {
     std::vector<vec2> points = distributePointsInCircle(armsN, radius);
     if (showInit) {
         for (vec2 p : points) {
-            drawPoint(p);
+            GLContext::drawPoint(p);
         }
     }
 
@@ -79,7 +76,7 @@ void Draw() {
     
     for (int i = 0; i < gen; i++) {
         vec2 newPoint = getMidpoint(inPoint, sidePoint);
-        drawPoint(newPoint, pointSize, color);
+        GLContext::drawPoint(newPoint, pointSize, color);
         inPoint = newPoint;
         index = getRandomInt(armsN, index);
         sidePoint = points[index];
@@ -114,46 +111,36 @@ void Ui() {
     ImGui::SliderFloat("point size", &pointSize, 0.001f, 30.0f);
 
     //background
-    ImGui::ColorEdit4("background", &background.x);
+    ImGui::ColorEdit4("background", &GLContext::background.x);
 
     //point color
     ImGui::ColorEdit4("point color", &pointColor.x);
 
     //alpha
-    ImGui::Checkbox("alpha blending", &alpha);
+    ImGui::Checkbox("alpha blending", &GLContext::alpha);
 
     //showInit
     ImGui::Checkbox("show inits points", &showInit);
 
     //take screenshot
+
     if (ImGui::Button("take a screenshot")) {
-        TakeScreenshot(filepath + to_string(counter) + ".png");
-        message = "saved to : ";
-        message.append(filepath + to_string(counter) + ".png");
-        counter++;
+        
+        message = GLContext::TakeScreenshot();
     }
 
     ImGui::Text(message.c_str());
 
-
-    
-
     ImGui::End();
 }
 
-void Input(int key) {
-    if (key == 32) {
-        TakeScreenshot("C:/Users/eliot/Desktop/test/yeah.png");
-    }
+int __stdcall WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char* szCmdLine, int iCmdShow) {
+    GLContext::window_name = "snowflake generator";
+    GLContext::onDraw = Draw;
+    GLContext::onDrawUI = Ui;
+    GLContext::init(1500, 1000);
+    return 0;
 }
 
-int WinMain() {
-	window_name = "snowflake generator";
-	onDraw = Draw;
-    onDrawUI = Ui;
-    onInput = Input;
-	init(1500, 1000);
-}
-
-//TODO : add paramteters GUI
+//TODO : add randomize button
 

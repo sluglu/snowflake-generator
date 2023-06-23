@@ -1,15 +1,19 @@
 #include <GLContext.h>
 #include <random>
 
+//generator parameters
 float PI = 3.14159265359f;
 int armsN = 5;
 int gen = 10;
 float radius = 0.7f;
 float pointSize = 1.0f;
 vec4 pointColor = vec4(1, 1, 1, 1);
-string message = " ";
-bool showInit = true;
 
+//genral fuhnction
+bool showInit = true;
+bool pause = false;
+
+//randomize bool
 bool RPI = true;
 bool RarmsN = true;
 bool Rgen = false;
@@ -18,6 +22,17 @@ bool RpointSize = false;
 bool RpointColor = true;
 bool Rbackground = true;
 
+//utillity
+string message = " ";
+
+int ClampInt(int value, int min, int max)
+{
+    if (value < min)
+        return min;
+    if (value > max)
+        return max;
+    return value;
+}
 
 
 float getRandomFloat(float min, float max) {
@@ -37,8 +52,8 @@ int getRandomInt(int min, int max) {
 
 void randomize() {
     if (RPI) PI = getRandomFloat(-10.0f, 10.0f);
-    if (RarmsN) armsN = getRandomInt(1, 50);
-    if (Rradius) gen = getRandomInt(1, 100);
+    if (RarmsN) armsN = getRandomInt(2, 50);
+    if (Rgen) gen = getRandomInt(1, 10000);
     if (Rradius) radius = getRandomFloat(0.0f, 1.0f);
     if (RpointSize) pointSize = getRandomFloat(0.001f, 10.0f);
     if (RpointColor) pointColor = vec4(getRandomFloat(0.0f, 1.0f) , getRandomFloat(0.0f, 1.0f), getRandomFloat(0.0f, 1.0f), getRandomFloat(0.0f, 1.0f));
@@ -87,6 +102,7 @@ int getRandomIntExclud(int maxValue, int exclud = -1) {
     return result;
 }
 
+//core algorithm
 void Draw() {
     std::vector<vec2> points = distributePointsInCircle(armsN, radius);
     if (showInit) {
@@ -94,18 +110,19 @@ void Draw() {
             GLContext::drawPoint(p);
         }
     }
+    if (!pause) {
+        int startIndex = getRandomIntExclud(armsN, -1);
+        vec2 inPoint = points[startIndex];
+        int index = getRandomIntExclud(armsN, startIndex);
+        vec2 sidePoint = points[index];
 
-    int startIndex = getRandomIntExclud(armsN, -1);
-    vec2 inPoint = points[startIndex];
-    int index = getRandomIntExclud(armsN, startIndex);
-    vec2 sidePoint = points[index];
-    
-    for (int i = 0; i < gen; i++) {
-        vec2 newPoint = getMidpoint(inPoint, sidePoint);
-        GLContext::drawPoint(newPoint, pointSize, pointColor);
-        inPoint = newPoint;
-        index = getRandomIntExclud(armsN, index);
-        sidePoint = points[index];
+        for (int i = 0; i < gen; i++) {
+            vec2 newPoint = getMidpoint(inPoint, sidePoint);
+            GLContext::drawPoint(newPoint, pointSize, pointColor);
+            inPoint = newPoint;
+            index = getRandomIntExclud(armsN, index);
+            sidePoint = points[index];
+        }
     }
     
 }
@@ -123,10 +140,12 @@ void Ui() {
     //ArmsN
     //ImGui::Text("arms number");
     ImGui::InputInt("arms number", &armsN);
+    armsN = ClampInt(armsN, 2, 50);
 
     //gen
     //ImGui::Text("generation between frame");
     ImGui::InputInt("generation/frame", &gen);
+    gen = ClampInt(gen, 1, 10000);
 
     //radius
     //ImGui::Text("radius");
@@ -170,10 +189,13 @@ void Ui() {
     }
     ImGui::Text(message.c_str());
 
+    //pause
+    ImGui::Checkbox("pause", &pause);
 
     ImGui::End();
 }
 
+//context init
 int __stdcall WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char* szCmdLine, int iCmdShow) {
     GLContext::window_name = "snowflake generator";
     GLContext::onDraw = Draw;
@@ -181,6 +203,4 @@ int __stdcall WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char* szCmdLine, int
     GLContext::init(1500, 1000);
     return 0;
 }
-
-//TODO : bug crash randomize
 

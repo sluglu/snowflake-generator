@@ -204,3 +204,5 @@ int __stdcall WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, char* szCmdLine, int
     return 0;
 }
 
+//TODO : explication paramettre (mouse temp window)
+
